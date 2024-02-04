@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Bank - Canvas-Like Quiz Creator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz Bank</h1>
+        </header>
+        <main>
+            <h2>Quizzes</h2>
+            <ul>
+                {% for quiz in quizzes %}
+                    <li>{{ quiz.title }}</li>
+                {% endfor %}
+            </ul>
+        </main>
+    </div>
+</body>
+</html>

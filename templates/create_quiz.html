@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Quiz - Canvas-Like Quiz Creator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Create a Quiz</h1>
+        </header>
+        <main>
+            <form method="post" action="{{ url_for('create_quiz') }}">
+                <label for="quiz_title">Quiz Title:</label>
+                <input type="text" name="quiz_title" required><br>
+
+                <div id="questions-container">
+                    <div class="question">
+                        <h3>Question 1</h3>
+                        <label for="question_1_text">Question Text:</label>
+                        <input type="text" name="question_1_text" required><br>
+
+                        {% for j in range(1, 5) %}
+                            <label for="question_1_option_{{ j }}">Option {{ j }}:</label>
+                            <input type="text" name="question_1_option_{{ j }}" required>
+                            <input type="radio" name="question_1_correct_option" value="{{ j }}" required> Correct<br>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="button" onclick="addQuestion()">Add Question</button>
+                <button type="button" onclick="removeQuestion()">Remove Last Question</button>
+
+                <button type="submit">Create Quiz</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        function addQuestion() {
+            var container = document.getElementById('questions-container');
+            var questionCount = container.children.length + 1;
+
+            var questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+
+            questionDiv.innerHTML = `
+                <h3>Question ${questionCount}</h3>
+                <label for="question_${questionCount}_text">Question Text:</label>
+                <input type="text" name="question_${questionCount}_text" required><br>
+
+                ${Array.from({ length: 4 }, (_, index) => `
+                    <label for="question_${questionCount}_option_${index + 1}">Option ${index + 1}:</label>
+                    <input type="text" name="question_${questionCount}_option_${index + 1}" required>
+                    <input type="radio" name="question_${questionCount}_correct_option" value="${index + 1}" required> Correct<br>
+                `).join('')}
+            `;
+
+            container.appendChild(questionDiv);
+        }
+
+        function removeQuestion() {
+            var container = document.getElementById('questions-container');
+            var lastQuestion = container.lastElementChild;
+
+            if (lastQuestion) {
+                container.removeChild(lastQuestion);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas-Like Quiz Creator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Canvas-Like Quiz Creator</h1>
+        </header>
+        <main>
+            <div class="buttons-container">
+                <a class="create-quiz-link" href="{{ url_for('create_quiz') }}">Create a Quiz</a>
+                <a class="question-bank-link" href="{{ url_for('question_bank') }}">Question Bank</a>
+                <a class="quiz-bank-link" href="{{ url_for('quiz_bank') }}">Quiz Bank</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
