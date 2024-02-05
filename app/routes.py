@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for
+from app import app
 
-app = Flask(__name__)
 
 # Sample data for storing quizzes and questions
 quizzes = []
@@ -50,6 +50,3 @@ def question_bank():
 @app.route('/quiz_bank')
 def quiz_bank():
     return render_template('quiz_bank.html', quizzes=quizzes)
-
-if __name__ == '__main__':
-    app.run(debug=True)
