@@ -1,4 +1,4 @@
-use terminal
-cd to folder
-python app.py
-copy address into search bar
+use terminal.
+cd to folder.
+python app.py.
+copy address into search bar.
