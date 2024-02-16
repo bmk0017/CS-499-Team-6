@@ -1,7 +1,6 @@
 from flask import render_template, request, redirect, url_for
 from app import app
 
-
 # Sample data for storing quizzes and questions
 quizzes = []
 questions = []
