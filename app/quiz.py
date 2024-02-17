@@ -1,5 +1,4 @@
 import logging
-
 import xml.etree.ElementTree as ET
 
 class Quiz:
@@ -8,10 +7,9 @@ class Quiz:
 
 
 #WIP No worky rn
-def parseQTI():
-    quizzes = []
-    questions = []
-    tree = ET.parse('C:\\Users\\matth\\Desktop\\Team 6 Project Extra Files\\team-6-quiz-export\\i618e88580f76f70a1ed28804f497df9c\\i618e88580f76f70a1ed28804f497df9c.xml')
+def parseQTI(file):
+    
+    tree = ET.parse(open_file)
     root = tree.getroot()
 
     #logging.info(root.iter('item'))
