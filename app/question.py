@@ -6,19 +6,23 @@ from dataclasses import dataclass
 @dataclass
 class Question:
     question_title: str
-    points_possible: int
-    assessment_question_id: str
+    points_possible: str
+    question_id: str
     question_content: str
     general_feedback: str
 
 @dataclass
 class MultipleChoice(Question):
     question_type = "multiple_choice_question"
-    choices: Dict[int,str]
-    correct_choice: int
-    choices_feedback: Dict[int, str]            #Dict[<id of choice>, <feedback>]
+    choices = {}
+    correct_choice: str
+    choices_feedback = {}            #Dict[<id of choice>, <feedback>] - Dict[str, str]
     correct_feedback: str
     incorrect_feedback: str
+
+    # def __str__(self):
+    #     return self.question_type + "\n" self.question_title + "\n" + self.choices + "\nCorrect Choice" + self.correct_choice + ""
+
 
 @dataclass
 class TrueFalse(Question):
@@ -84,7 +88,7 @@ class Numeric(Question):
 @dataclass
 class Formula(Question):
     question_type = "calculated_question"
-    possible_question_values: Dict[str, ]
+    #possible_question_values: Dict[str, ]
     correct_feedback: str
     incorrect_feedback: str
 
