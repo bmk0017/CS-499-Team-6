@@ -8,5 +8,5 @@ class Quiz:
     point_possible_total: int
     description: str
     quiz_type: str
-    questions: List
+    questions = []
     shuffle_answers: bool
