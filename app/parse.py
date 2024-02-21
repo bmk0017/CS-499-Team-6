@@ -1,6 +1,6 @@
 
-from app.quiz import Quiz
-from app.question import *
+from quiz import Quiz
+from question import *
 import logging
 
 import xml.etree.ElementTree as ET
@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 
 def parseQTI(file):
 
-    questions = [] #Change
+    allQuestions = Quiz()
     
     tree = ET.parse(file)
     root = tree.getroot()
@@ -42,12 +42,11 @@ def parseQTI(file):
         elif question_type == Text.question_type:
             question = parseText(question_elem) 
 
-        if type(question)!=type(None): #This IF may not be neccessary later on
-            questions.append(question)
-            logging.info(question)
-            logging.info(questions)
+        allQuestions.questions.append(question)
+        logging.info(question)
+        logging.info(allQuestions)
            
-    return questions
+    return allQuestions
 
 #WIP
 def parseMultipleChoice(item):
@@ -129,37 +128,128 @@ def parseFillintheBlank(item):
 
     #Retrieve item feedback
     for child in item.findall(r'./{*}itemfeedback'):
-        question.choices_feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
+        question.feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
 
     return question
 
 def parseFillinMultipleBlanks(item):
+    question = FillinMultipleBlanks()
 
-    return
+    #Retrieve question title
+    question.question_title = item.attrib['title']
+
+    #Retrieve points possible
+    question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
+
+    #Retrieve assessment Id
+    question.question_id = item.attrib['ident']
+    
+    #Retrieve the question content
+    question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
+
+    #Retrieve Id of correct answer choice
+    for child in item.findall(r"./{*}resprocessing/{*}respcondition[@continue='Yes']"):
+        if (match := child.find(r"/{*}conditionvar/{*}varequal[@respident='response1']").text) is not None:
+            question.correct_choices[child.find(r'./{*}displayfeedback').attrib['linkrefid'].removesuffix('_fb')] = match
+
+    #Retrieve item feedback
+    for child in item.findall(r'./{*}itemfeedback'):
+        question.feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
+
+    return question
 
 def parseMultipleAnswers(item):
+    question = MultipleAnswers()
 
-    return
+    #Retrieve question title
+    question.question_title = item.attrib['title']
+
+    #Retrieve points possible
+    question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
+
+    #Retrieve assessment Id
+    question.question_id = item.attrib['ident']
+    
+    #Retrieve the question content
+    question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
+
+    #Retrieve Id of correct answer choice
+    for child in item.findall(r"./{*}resprocessing/{*}respcondition[@continue='Yes']"):
+        if (match := child.find(r"/{*}conditionvar/{*}varequal[@respident='response1']").text) is not None:
+            question.correct_choices[child.find(r'./{*}displayfeedback').attrib['linkrefid'].removesuffix('_fb')] = match
+
+    #Retrieve item feedback
+    for child in item.findall(r'./{*}itemfeedback'):
+        question.feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
+
+    return question
 
 def parseMultipleDropdowns(item):
+    question = MultipleDropdowns()
 
-    return
+    #Retrieve question title
+    question.question_title = item.attrib['title']
+
+    #Retrieve points possible
+    question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
+
+    #Retrieve assessment Id
+    question.question_id = item.attrib['ident']
+    
+    #Retrieve the question content
+    question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
+
+    #Retrieve Id of correct answer choice
+    for child in item.findall(r"./{*}resprocessing/{*}respcondition[@continue='Yes']"):
+        if (match := child.find(r"/{*}conditionvar/{*}varequal[@respident='response1']").text) is not None:
+            question.correct_choices[child.find(r'./{*}displayfeedback').attrib['linkrefid'].removesuffix('_fb')] = match
+
+    #Retrieve item feedback
+    for child in item.findall(r'./{*}itemfeedback'):
+        question.feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
+
+    return question
 
 def parseMatching(item):
+    question = Matching()
 
-    return
+    #Retrieve question title
+    question.question_title = item.attrib['title']
+
+    #Retrieve points possible
+    question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
+
+    #Retrieve assessment Id
+    question.question_id = item.attrib['ident']
+    
+    #Retrieve the question content
+    question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
+
+    #Retrieve Id of correct answer choice
+    for child in item.findall(r"./{*}resprocessing/{*}respcondition[@continue='Yes']"):
+        if (match := child.find(r"/{*}conditionvar/{*}varequal[@respident='response1']").text) is not None:
+            question.correct_choices[child.find(r'./{*}displayfeedback').attrib['linkrefid'].removesuffix('_fb')] = match
+
+    #Retrieve item feedback
+    for child in item.findall(r'./{*}itemfeedback'):
+        question.feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
+
+    return question
 
 def parseNumeric(item):
+    question = Numeric()
 
-    return
+    return question
 
 def parseFormula(item):
+    question = Formula()
 
-    return
+    return question
 
 def parseEssay(item):
+    question = Essay()
 
-    return
+    return question
 
 def parseFileUpload(item):
 
