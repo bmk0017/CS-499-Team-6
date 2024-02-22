@@ -8,5 +8,8 @@ class Quiz:
     point_possible_total: int
     description: str
     quiz_type: str
-    questions = []
+    questions: List
     shuffle_answers: bool
+
+    def __init__(self):
+        self.questions = []
