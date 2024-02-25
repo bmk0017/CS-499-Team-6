@@ -147,16 +147,29 @@ class Numeric(Question):
 
     answer_range: dict #Double Check
 
+    def __init__(self):
+        super().__init__()
+        self.answer_range = {}
+
 class Formula(Question):
     question_type = "calculated_question"
     #possible_question_values: Dict[str, ]
+
+    def __init__(self):
+        super().__init__()
 
 
 class Essay(Question):
     question_type = "essay_question"
 
+    def __init__(self):
+        super().__init__()
+
 class FileUpload(Question):
     question_type = "file_upload_question"
+
+    def __init__(self):
+        super().__init__()
 
 class Text(Question):
     question_type = "text_only_question"
