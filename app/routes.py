@@ -10,7 +10,10 @@ questions = []
 # Home route: Displays the main page with the list of quizzes
 @app.route('/')
 def home():
-    parseQTI('<filepath to xml>')
+
+    
+    #parseQTI(r'C:\Users\matth\Desktop\Team 6 Project Extra Files\team-6-quiz-export\i618e88580f76f70a1ed28804f497df9c\i618e88580f76f70a1ed28804f497df9c.xml')
+    parseQTI(r'C:\Users\matth\Desktop\Team 6 Project Extra Files\team-6-quiz-export-2\gf9ca51a6679e4779d0d68ef2dc33bc0a\gf9ca51a6679e4779d0d68ef2dc33bc0a.xml')
 
     return render_template('index.html', quizzes=quizzes)
 

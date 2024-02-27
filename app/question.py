@@ -144,8 +144,23 @@ class Matching(Question):
 
 class Numeric(Question):
     question_type = "numerical_question"
+    exact_answers: Dict[str, str]
+    answer_ranges: Dict[str, str]
 
-    answer_range: dict #Double Check
+    def __init__(self):
+        super().__init__()
+        self.exact_answers = {}
+        self.answer_ranges = {}
+
+    def __str__(self):
+        return ("\n------------------------\n"
+                + self.question_type 
+                + "\n" + self.question_title 
+                + "\nExact Answers:\n" + str(self.exact_answers)
+                + "\nAnswer Ranges:\n" + str(self.answer_ranges)
+                + "\nPoints:\n" + self.points_possible 
+                + "\n" + str(self.feedback))
+        
 
     def __init__(self):
         super().__init__()
