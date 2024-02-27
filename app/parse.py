@@ -252,10 +252,18 @@ def parseMatching(item):
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
 
-    #Retrieve Id of correct answer choice
-    for child in item.findall(r"./{*}resprocessing/{*}respcondition[@continue='Yes']"):
-        if (match := child.find(r"/{*}conditionvar/{*}varequal[@respident='response1']").text) is not None:
-            question.correct_choices[child.find(r'./{*}displayfeedback').attrib['linkrefid'].removesuffix('_fb')] = match
+    #Retrieve Id of left choices and right choices
+    first = True
+    for child in item.findall(r"./{*}presentation/{*}response_lid"):
+        if first:
+            for elem in child.findall(r'./{*}render_choice/{*}response_label'):
+                question.right_choices[elem.attrib['ident']] = elem.find(r'./{*}material/{*}mattext').text
+            first = False
+        question.left_choices[child.attrib['ident'].removeprefix("response_")] = child.find(r'./{*}material/{*}mattext').text
+
+    #Retrieve the correct left to right choices
+    for child in item.findall(r"./{*}resprocessing/{*}respcondition/{*}conditionvar/{*}varequal"):
+        question.correct_choices[child.attrib['respident'].removeprefix('response_')] = child.text
 
     #Retrieve item feedback
     for child in item.findall(r'./{*}itemfeedback'):
@@ -266,7 +274,53 @@ def parseMatching(item):
 def parseNumeric(item):
     question = Numeric()
 
-    return #question
+    #Retrieve question title
+    question.question_title = item.attrib['title']
+
+    #Retrieve points possible
+    question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
+
+    #Retrieve assessment Id
+    question.question_id = item.attrib['ident']
+    
+    #Retrieve the question content
+    question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
+
+    #
+    newIDValue = -1
+    for child in item.findall(r"./{*}resprocessing/{*}respcondition[@continue='No']/{*}conditionvar"):
+        currentID = None
+
+        #Get an ID if there is one
+        if (id := child.findall(r'./{*}displayfeedback')) is not None: #If there is feedback tags
+                for elem in id: #if the feedback tag isn't 'correct_fb' then get the feedback id
+                    if (tag := elem.attrib['linkrefid']) is not 'correct_fb':
+                        currentID = tag.removesuffix('_fb')
+                        
+        #If this has an exact answer store that, otherwise don't
+        if (match := child.find(r'./{*}or')) is not None: 
+            if currentID is None:
+                currentID = str(newIDValue)
+                newIDValue -= 1
+
+            question.exact_answers[currentID] = match.find(r'./{*}varequal').text
+
+            question.answer_ranges[currentID] = [match.find(r'./{*}and/{*}vargte').text,match.find(r'./{*}and/{*}varlte').text]
+        else:
+            if currentID is None:
+                currentID = str(newIDValue)
+                newIDValue -= 1
+
+            question.exact_answers[currentID] = None
+
+            question.answer_ranges[currentID] = [child.find(r'./{*}vargte').text,child.find(r'./{*}varlte').text]
+    
+    #Retrieve item feedback
+    for child in item.findall(r'./{*}itemfeedback'):
+        question.feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
+
+
+    return question
 
 def parseFormula(item):
     question = Formula()
