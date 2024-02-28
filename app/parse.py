@@ -286,16 +286,16 @@ def parseNumeric(item):
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
 
-    #
+    #Retrieve Exact answer if there is one, and the answer range
     newIDValue = -1
     for child in item.findall(r"./{*}resprocessing/{*}respcondition[@continue='No']/{*}conditionvar"):
         currentID = None
 
         #Get an ID if there is one
         if (id := child.findall(r'./{*}displayfeedback')) is not None: #If there is feedback tags
-                for elem in id: #if the feedback tag isn't 'correct_fb' then get the feedback id
-                    if (tag := elem.attrib['linkrefid']) is not 'correct_fb':
-                        currentID = tag.removesuffix('_fb')
+            for elem in id: #if the feedback tag isn't 'correct_fb' then get the feedback id
+                if (tag := elem.attrib['linkrefid']) is not 'correct_fb':
+                    currentID = tag.removesuffix('_fb')
                         
         #If this has an exact answer store that, otherwise don't
         if (match := child.find(r'./{*}or')) is not None: 
@@ -305,20 +305,46 @@ def parseNumeric(item):
 
             question.exact_answers[currentID] = match.find(r'./{*}varequal').text
 
-            question.answer_ranges[currentID] = [match.find(r'./{*}and/{*}vargte').text,match.find(r'./{*}and/{*}varlte').text]
+            #Differentiate between GTE and GT, aswell as LTE and LT
+            greater = 0
+            lesser = 0
+            if (gt := match.find(r'./{*}and/{*}vargte')) is not None:
+                greater = gt.text
+            else:
+                greater = match.find(r'./{*}and/{*}vargt').text
+
+            if (lt := match.find(r'./{*}and/{*}varlte')) is not None:
+                lesser = lt.text
+            else:
+                lesser = match.find(r'./{*}and/{*}varlt').text
+
+            question.answer_ranges[currentID] = [greater,lesser]
         else:
+            #Does the element require a new ID
             if currentID is None:
                 currentID = str(newIDValue)
                 newIDValue -= 1
 
             question.exact_answers[currentID] = None
 
-            question.answer_ranges[currentID] = [child.find(r'./{*}vargte').text,child.find(r'./{*}varlte').text]
+            #Differentiate between GTE and GT, aswell as LTE and LT
+            greater = 0
+            lesser = 0
+            if (gt := child.find(r'./{*}vargte')) is not None:
+                greater = gt.text
+            else:
+                greater = child.find(r'./{*}vargt').text
+
+            if (lt := child.find(r'./{*}varlte')) is not None:
+                lesser = lt.text
+            else:
+                lesser = child.find(r'./{*}varlt').text
+
+            question.answer_ranges[currentID] = [greater,lesser]
     
     #Retrieve item feedback
     for child in item.findall(r'./{*}itemfeedback'):
         question.feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
-
 
     return question
 
@@ -330,12 +356,59 @@ def parseFormula(item):
 def parseEssay(item):
     question = Essay()
 
-    return #question
+    #Retrieve question title
+    question.question_title = item.attrib['title']
+
+    #Retrieve points possible
+    question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
+
+    #Retrieve assessment Id
+    question.question_id = item.attrib['ident']
+    
+    #Retrieve the question content
+    question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
+        
+    #Retrieve item feedback
+    for child in item.findall(r'./{*}itemfeedback'):
+        question.feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
+
+    return question
 
 def parseFileUpload(item):
+    question = FileUpload()
 
-    return
+    #Retrieve question title
+    question.question_title = item.attrib['title']
+
+    #Retrieve points possible
+    question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
+
+    #Retrieve assessment Id
+    question.question_id = item.attrib['ident']
+    
+    #Retrieve the question content
+    question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
+        
+    #Retrieve item feedback
+    for child in item.findall(r'./{*}itemfeedback'):
+        question.feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
+
+    return question
 
 def parseText(item):
+    question = Text()
+    
+    #Retrieve question title
+    question.question_title = item.attrib['title']
 
-    return
+    #Retrieve points possible
+    question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
+
+    #Retrieve assessment Id
+    question.question_id = item.attrib['ident']
+    
+    #Retrieve the question content
+    question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
+        
+    return question
+    

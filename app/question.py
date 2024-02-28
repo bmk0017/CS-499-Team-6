@@ -160,11 +160,6 @@ class Numeric(Question):
                 + "\nAnswer Ranges:\n" + str(self.answer_ranges)
                 + "\nPoints:\n" + self.points_possible 
                 + "\n" + str(self.feedback))
-        
-
-    def __init__(self):
-        super().__init__()
-        self.answer_range = {}
 
 class Formula(Question):
     question_type = "calculated_question"
@@ -180,15 +175,38 @@ class Essay(Question):
     def __init__(self):
         super().__init__()
 
+    def __str__(self):
+        return ("\n------------------------\n"
+                + self.question_type 
+                + "\n" + self.question_title 
+                + "\nQuestion:\n" + str(self.question_content)
+                + "\nPoints:\n" + self.points_possible 
+                + "\n" + str(self.feedback))
+
 class FileUpload(Question):
     question_type = "file_upload_question"
 
     def __init__(self):
         super().__init__()
 
+    def __str__(self):
+        return ("\n------------------------\n"
+                + self.question_type 
+                + "\n" + self.question_title 
+                + "\nQuestion:\n" + str(self.question_content)
+                + "\nPoints:\n" + self.points_possible 
+                + "\n" + str(self.feedback))
+
 class Text(Question):
     question_type = "text_only_question"
     points_possible = 0
+
+    def __str__(self):
+        return ("\n------------------------\n"
+                + self.question_type 
+                + "\n" + self.question_title 
+                + "\nQuestion:\n" + str(self.question_content)
+                + "\nPoints:\n" + self.points_possible)
 
 class Variable:
     variable_name: str
