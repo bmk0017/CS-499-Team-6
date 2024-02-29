@@ -1,14 +1,49 @@
 
 from app.quiz import *
 from app.question import *
+import tempfile
 import logging
+import zipfile
+import os
 
 import xml.etree.ElementTree as ET
 
 
-def parseQTI(file):
+def ziptoQuizObj(filePath):
+    with tempfile.TemporaryDirectory() as td:
+        try:
+            with zipfile.ZipFile(filePath) as archive:
+                archive.extractall(td)
+        except zipfile.BadZipFile as error:
+            print(error)
 
-    allQuestions = Quiz()
+        for root, dirs, file in os.walk(td):
+            for f in file:
+                if f not in ['assessment_meta.xml', 'imsmanifest.xml']:
+                    quiz = parseQuiz(os.path.join(root, "assessment_meta.xml"))
+                    return parseQTI(os.path.join(root, f), quiz)
+
+def parseQuiz(file):
+    baseQuiz = Quiz()
+
+    tree = ET.parse(file)
+    root = tree.getroot()
+
+    baseQuiz.title = root.find(r'./{*}title').text
+    baseQuiz.description = root.find(r'./{*}description').text
+    baseQuiz.id = root.attrib['identifier']
+    baseQuiz.description = root.find(r'./{*}points_possible').text
+    if root.find(r'./{*}shuffle_answers').text == 'true':
+        baseQuiz.shuffle_answers = True
+    else:
+        baseQuiz.shuffle_answers = False
+
+    return baseQuiz
+        
+
+def parseQTI(file, quiz:Quiz):
+
+    allQuestions = quiz
     
     tree = ET.parse(file)
     root = tree.getroot()
@@ -47,8 +82,8 @@ def parseQTI(file):
             logging.info(question)
         
 
-    for q in allQuestions.questions:
-        logging.info(q)
+    # for q in allQuestions.questions:
+    #     logging.info(q)
     
     return allQuestions
 
@@ -294,7 +329,7 @@ def parseNumeric(item):
         #Get an ID if there is one
         if (id := child.findall(r'./{*}displayfeedback')) is not None: #If there is feedback tags
             for elem in id: #if the feedback tag isn't 'correct_fb' then get the feedback id
-                if (tag := elem.attrib['linkrefid']) is not 'correct_fb':
+                if (tag := elem.attrib['linkrefid']) != 'correct_fb':
                     currentID = tag.removesuffix('_fb')
                         
         #If this has an exact answer store that, otherwise don't
@@ -451,4 +486,3 @@ def parseText(item):
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
         
     return question
-    

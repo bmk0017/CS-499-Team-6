@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for
 from app import app
 
-from app.parse import parseQTI
+from app.parse import parseQTI, ziptoQuizObj
 
 # Sample data for storing quizzes and questions
 quizzes = []
@@ -10,10 +10,11 @@ questions = []
 # Home route: Displays the main page with the list of quizzes
 @app.route('/')
 def home():
-    parseQTI('')
     
+    quiz = ziptoQuizObj(r'<path to zip>')
+    for q in quiz.questions:
+        print(str(q))    
     
-
     return render_template('index.html', quizzes=quizzes)
 
 # Create Quiz route: Handles quiz creation form submission

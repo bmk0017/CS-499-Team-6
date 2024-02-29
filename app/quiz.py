@@ -4,10 +4,9 @@ from typing import List
 
 class Quiz:
     id: str
-    quiz_name: str
+    title: str
     point_possible_total: int
     description: str
-    quiz_type: str
     questions: List
     shuffle_answers: bool
 
