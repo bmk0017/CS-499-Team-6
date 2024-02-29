@@ -160,14 +160,60 @@ class Numeric(Question):
                 + "\nAnswer Ranges:\n" + str(self.answer_ranges)
                 + "\nPoints:\n" + self.points_possible 
                 + "\n" + str(self.feedback))
+    
+class Variable:
+    id: str
+    variable_name_value: Dict[str, str]
+    answers: List
+
+    def __init__(self):
+        self.variable_name_value = {}
+        self.answers = []
+
+    def __repr__(self):
+        return ("\n===="
+            + "\nID: " + self.id
+            + "\nVariable Name and Value: " + str(self.variable_name_value)
+            + "\nAnswers: " + str(self.answers))
+
+class Equation:
+    formulas: List
+    answer_tolerance: str
+    decimal_places: str
+    variable_range: Dict[str, Dict[str, str]]
+    variable_scale: Dict[str, str]
+
+    def __init__(self):
+        self.formulas = []
+        self.variable_range = {}
+        self.variable_scale = {}
+
+    def __str__(self):
+        return (str(self.formulas)
+            + "\nAnswer Tolerance: " + self.answer_tolerance
+            + "\nDecimal Places: " + self.decimal_places
+            + "\nVariable Range: " + str(self.variable_range)
+            + "\nVariable Scale: " + str(self.variable_scale))
 
 class Formula(Question):
     question_type = "calculated_question"
-    #possible_question_values: Dict[str, ]
+    possible_questions: List
+    equation: Equation
 
     def __init__(self):
         super().__init__()
+        self.possible_questions = []
+        self.equation = Equation()
 
+    def __str__(self):
+        return ("\n------------------------\n"
+                + self.question_type 
+                + "\n" + self.question_title 
+                + "\nQuestion:\n" + self.question_content
+                + "\nEquation:\n" + str(self.equation)
+                + "\nQuestions:\n" + str(self.possible_questions)
+                + "\nPoints: " + self.points_possible 
+                + "\n" + str(self.feedback))
 
 class Essay(Question):
     question_type = "essay_question"
@@ -180,7 +226,7 @@ class Essay(Question):
                 + self.question_type 
                 + "\n" + self.question_title 
                 + "\nQuestion:\n" + str(self.question_content)
-                + "\nPoints:\n" + self.points_possible 
+                + "\nPoints: " + self.points_possible 
                 + "\n" + str(self.feedback))
 
 class FileUpload(Question):
@@ -194,22 +240,23 @@ class FileUpload(Question):
                 + self.question_type 
                 + "\n" + self.question_title 
                 + "\nQuestion:\n" + str(self.question_content)
-                + "\nPoints:\n" + self.points_possible 
+                + "\nPoints: " + self.points_possible 
                 + "\n" + str(self.feedback))
 
 class Text(Question):
     question_type = "text_only_question"
     points_possible = 0
 
+    def __init__(self):
+        super().__init__()
+
     def __str__(self):
         return ("\n------------------------\n"
                 + self.question_type 
                 + "\n" + self.question_title 
                 + "\nQuestion:\n" + str(self.question_content)
-                + "\nPoints:\n" + self.points_possible)
+                + "\nPoints: " + self.points_possible)
 
-class Variable:
-    variable_name: str
-    min_value: str
-    max_value: str
-    value_with_answers: Dict[int, Dict[str, str]]         #Dict[<id>, Dict[value, answer]]  
+
+
+

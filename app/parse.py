@@ -351,7 +351,47 @@ def parseNumeric(item):
 def parseFormula(item):
     question = Formula()
 
-    return #question
+     #Retrieve question title
+    question.question_title = item.attrib['title']
+
+    #Retrieve points possible
+    question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
+
+    #Retrieve assessment Id
+    question.question_id = item.attrib['ident']
+    
+    #Retrieve the question content
+    question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
+
+    #Retrieve Equation/Formula Information
+    question.equation.answer_tolerance = item.find(r'./{*}itemproc_extension/{*}calculated/{*}answer_tolerance').text
+    question.equation.decimal_places = item.find(r'./{*}itemproc_extension/{*}calculated/{*}formulas').attrib['decimal_places']
+    for child in item.findall(r'./{*}itemproc_extension/{*}calculated/{*}formulas/{*}formula'):
+        question.equation.formulas.append(child.text)
+
+    for child in item.findall(r'./{*}itemproc_extension/{*}calculated/{*}vars/{*}var'):
+        range = {}
+        range[child.find(r'./{*}min').text] = child.find(r'./{*}max').text
+        question.equation.variable_range[child.attrib['name']] = range
+        question.equation.variable_scale[child.attrib['name']] = child.attrib['scale']
+
+    #Retrieve Variable value and answers
+    for child in item.findall(r'./{*}itemproc_extension/{*}calculated/{*}var_sets/{*}var_set'):
+        var = Variable()
+        var.id = child.attrib['ident']
+        for elem in child.findall(r'./{*}var'):
+            var.variable_name_value[elem.attrib['name']] = elem.text
+        
+        for elem in child.findall(r'./{*}answer'):
+            var.answers.append(elem.text)
+        question.possible_questions.append(var)
+
+    #Retrieve item feedback
+    for child in item.findall(r'./{*}itemfeedback'):
+        question.feedback[child.attrib['ident'].removesuffix('_fb')] = child.find(r'./{*}flow_mat/{*}material/{*}mattext').text
+
+        
+    return question
 
 def parseEssay(item):
     question = Essay()
