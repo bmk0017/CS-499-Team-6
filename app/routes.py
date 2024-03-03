@@ -1,58 +1,77 @@
+# Import necessary modules and classes
 from flask import render_template, request, redirect, url_for
 from app import app
+from app.parse import parseQTI
+from werkzeug.utils import secure_filename
+import os
 
-from app.parse import parseQTI, ziptoQuizObj
-
-# Sample data for storing quizzes and questions
+# Sample data for storing quizzes and questions (using an in-memory list as an example)
 quizzes = []
 questions = []
+
+
+# Specify the upload folder for the XML files
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Function to store a quiz in the in-memory list
+def store_quiz_in_memory(quiz):
+    quizzes.append(quiz)
+
+# Function to retrieve quizzes from the in-memory list
+def retrieve_quizzes_from_memory():
+    return quizzes
 
 # Home route: Displays the main page with the list of quizzes
 @app.route('/')
 def home():
-    
-    quiz = ziptoQuizObj(r'<path to zip>')
-    for q in quiz.questions:
-        print(str(q))    
-    
-    return render_template('index.html', quizzes=quizzes)
+    # Retrieve the list of quizzes from the in-memory list
+    return render_template('index.html', quizzes=retrieve_quizzes_from_memory())
 
 # Create Quiz route: Handles quiz creation form submission
 @app.route('/create_quiz', methods=['GET', 'POST'])
 def create_quiz():
     if request.method == 'POST':
-        quiz_title = request.form['quiz_title']
-        quiz_questions = []
-        for i in range(1, 6):  # Assuming 5 questions for simplicity
-            question_text = request.form.get(f'question_{i}_text')
-            if question_text:
-                options = [
-                    request.form.get(f'question_{i}_option_{j}')
-                    for j in range(1, 5)  # Assuming 4 options per question
-                ]
-                correct_option = request.form.get(f'question_{i}_correct_option')
+        # Handle form submission logic
+        if 'file' in request.files:
+            file = request.files['file']
+            if file.filename != '':
+                # Save the uploaded file to the specified folder
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
 
-                question_data = {
-                    'text': question_text,
-                    'options': options,
-                    'correct_option': correct_option
-                }
-                questions.append(question_data)
-                quiz_questions.append(len(questions) - 1)  # Store the index of the question
+                # Now, you can pass the file_path to the parseQTI function
+                parseQTI(file_path)
 
-        quizzes.append({'title': quiz_title, 'questions': quiz_questions})
+        else:
+            # Handle the case where no file is uploaded
+            # Example: Generate a new quiz with default questions
+            new_quiz = {
+                'id': len(quizzes) + 1,  # Assign a unique ID
+                'name': request.form.get('quiz_name'),  # Get the quiz name from the form
+                'questions': []  # Add default questions or leave it empty
+            }
 
-        return redirect(url_for('home'))
+            # Store the created quiz in the in-memory list
+            store_quiz_in_memory(new_quiz)
+
+        return redirect(url_for('create_quiz_page'))  # Redirect to create_quiz.html
 
     return render_template('create_quiz.html')
 
-# Question Bank route: Placeholder for the question bank page
-@app.route('/question_bank')
-def question_bank():
-    # Placeholder for the question bank page
-    return "Question Bank Page"
+# New route for creating a quiz page
+@app.route('/create_quiz_page')
+def create_quiz_page():
+    return render_template('create_quiz.html')
 
 # Quiz Bank route: Displays the list of quizzes in the quiz bank page
 @app.route('/quiz_bank')
 def quiz_bank():
-    return render_template('quiz_bank.html', quizzes=quizzes)
+    # Retrieve the list of quizzes from the in-memory list
+    return render_template('quiz_bank.html', quizzes=retrieve_quizzes_from_memory())
+
+# New route for the quiz bank page
+@app.route('/create_quiz_bank_page')
+def create_quiz_bank_page():
+    return render_template('quiz_bank.html')

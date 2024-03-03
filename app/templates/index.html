@@ -3,19 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canvas-Like Quiz Creator</title>
+    <title>Canvas to Paper - Quiz Generation</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Canvas-Like Quiz Creator</h1>
+            <h1>Canvas to Paper - Quiz Generation</h1>
+            <hr> <!-- Line underneath the title -->
         </header>
         <main>
             <div class="buttons-container">
-                <a class="create-quiz-link" href="{{ url_for('create_quiz') }}">Create a Quiz</a>
-                <a class="question-bank-link" href="{{ url_for('question_bank') }}">Question Bank</a>
-                <a class="quiz-bank-link" href="{{ url_for('quiz_bank') }}">Quiz Bank</a>
+                <button class="create-quiz-button">Create a New Quiz</button>
+                <div class="existing-quizzes">
+                    <h2>Existing Quizzes</h2>
+                    <ul class="quiz-list">
+                        <!-- List of existing quizzes goes here -->
+                        <li>
+                            Quiz 1
+                            <div class="quiz-buttons">
+                                <button class="edit-button">Edit</button>
+                                <button class="view-button">View</button>
+                                <button class="export-button">Export</button>
+                            </div>
+                        </li>
+                        <li>
+                            Quiz 2
+                            <div class="quiz-buttons">
+                                <button class="edit-button">Edit</button>
+                                <button class="view-button">View</button>
+                                <button class="export-button">Export</button>
+                            </div>
+                        </li>
+                        <li>
+                            Quiz 3
+                            <div class="quiz-buttons">
+                                <button class="edit-button">Edit</button>
+                                <button class="view-button">View</button>
+                                <button class="export-button">Export</button>
+                            </div>
+                        </li>
+                        <!-- Add more items as needed -->
+                    </ul>
+                </div>
+                <button class="create-quiz-bank-button">Create Quiz Bank</button>
+                <div class="existing-quiz-banks">
+                    <h2>Existing Quiz Banks</h2>
+                    <ul class="quiz-bank-list">
+                        <!-- List of existing quiz banks goes here -->
+                        <li>
+                            Quiz Bank 1
+                            <div class="quiz-bank-buttons">
+                                <button class="edit-bank-button">Edit</button>
+                                <button class="view-bank-button">View</button>
+                            </div>
+                        </li>
+                        <li>
+                            Quiz Bank 2
+                            <div class="quiz-bank-buttons">
+                                <button class="edit-bank-button">Edit</button>
+                                <button class="view-bank-button">View</button>
+                            </div>
+                        </li>
+                        <li>
+                            Quiz Bank 3
+                            <div class="quiz-bank-buttons">
+                                <button class="edit-bank-button">Edit</button>
+                                <button class="view-bank-button">View</button>
+                            </div>
+                        </li>
+                        <!-- Add more items as needed -->
+                    </ul>
+                </div>
+                <button class="import-qti-button">Import QTI File</button>
+                <div class="drag-drop-section">
+                    <input type="file" id="fileInput" class="drag-drop-input" />
+                    <label for="fileInput" class="drag-drop-label">Drag and drop a file or click to browse</label>
+                </div>
             </div>
         </main>
     </div>

@@ -1,0 +1,49 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+header {
+    background-color: #e74c3c; /* Reddish Orange */
+    color: #ecf0f1;
+    padding: 20px;
+}
+
+main {
+    padding: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #e67e22; /* Darker Orange */
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.create-quiz-link,
+.question-bank-link,
+.quiz-bank-link {
+    display: block;
+    margin-top: 10px;
+    background-color: #d35400; /* Orangish Brown */
+    color: #ecf0f1;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.create-quiz-link:hover,
+.question-bank-link:hover,
+.quiz-bank-link:hover {
+    background-color: #a04000; /* Darker Orangish Brown */
+}
