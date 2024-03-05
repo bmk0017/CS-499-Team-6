@@ -17,11 +17,14 @@ def ziptoQuizObj(filePath):
         except zipfile.BadZipFile as error:
             print(error)
 
+        quizList = []
         for root, dirs, file in os.walk(td):
             for f in file:
                 if f not in ['assessment_meta.xml', 'imsmanifest.xml']:
                     quiz = parseQuiz(os.path.join(root, "assessment_meta.xml"))
-                    return parseQTI(os.path.join(root, f), quiz)
+                    quizList.append(parseQTI(os.path.join(root, f), quiz))
+                    
+    return quizList
 
 def parseQuiz(file):
     baseQuiz = Quiz()
