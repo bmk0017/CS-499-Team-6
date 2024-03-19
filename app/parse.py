@@ -82,11 +82,6 @@ def parseQTI(file, quiz:Quiz):
 
         if type(question)!=type(None): #This IF may not be neccessary later on
             allQuestions.questions.append(question)
-            logging.info(question)
-        
-
-    # for q in allQuestions.questions:
-    #     logging.info(q)
     
     return allQuestions
 

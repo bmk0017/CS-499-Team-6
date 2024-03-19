@@ -1,16 +1,34 @@
 from app.question import *
 from app.quiz import *
-from app.parse import ziptoQuizObj
 import pickle
+import os
 
-def saveQuiz(quizInfo):
+class Save:
+    def __init__(self, file = 'savefile.pickle'):
+        self.saveFile = os.getcwd() +'\\'+ file
 
-    with open('savefile', 'w') as f:
-        pickle.dump(quizInfo, f)
+    def saveQuiz(self, quizInfo):
 
-def loadQuiz():
+        with open(self.saveFile, 'ab') as f:
+            #Check if it is a quiz so that we can accept single quiz objects and lists
+            if isinstance(quizInfo, Quiz):
+                quizInfo = [quizInfo]
+            
+            for q in quizInfo:
+                pickle.dump(q, f)
 
-    with open('savefile') as f:
-        quizInfo = pickle.load(f)
+    def loadQuiz(self):
+        try:
+            with open(self.saveFile, 'rb') as f:
+                quizList = []
+                while True:
+                    try:
+                        quiz = pickle.load(f)
+                    except EOFError:
+                        break
+                    quizList.append(quiz)
+                f.seek(0)
 
-    return quizInfo
+            return quizList
+        except FileNotFoundError:
+            return []

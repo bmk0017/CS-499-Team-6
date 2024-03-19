@@ -19,30 +19,16 @@
                     <h2>Existing Quizzes</h2>
                     <ul class="quiz-list">
                         <!-- List of existing quizzes goes here -->
-                        <li>
-                            Quiz 1
-                            <div class="quiz-buttons">
-                                <button class="edit-button">Edit</button>
-                                <button class="view-button">View</button>
-                                <button class="export-button">Export</button>
-                            </div>
-                        </li>
-                        <li>
-                            Quiz 2
-                            <div class="quiz-buttons">
-                                <button class="edit-button">Edit</button>
-                                <button class="view-button">View</button>
-                                <button class="export-button">Export</button>
-                            </div>
-                        </li>
-                        <li>
-                            Quiz 3
-                            <div class="quiz-buttons">
-                                <button class="edit-button">Edit</button>
-                                <button class="view-button">View</button>
-                                <button class="export-button">Export</button>
-                            </div>
-                        </li>
+                        {% for quiz in quizzes %}
+                            <li>
+                                {{ quiz.title }}
+                                <div class="quiz-buttons">
+                                    <button class="edit-button">Edit</button>
+                                    <a href="/demo_page/{{quiz.id}}"><button class="view-button">View</button></a>
+                                    <button class="export-button">Export</button>
+                                </div>
+                            </li>
+                        {% endfor %}
                         <!-- Add more items as needed -->
                     </ul>
                 </div>
@@ -75,11 +61,16 @@
                         <!-- Add more items as needed -->
                     </ul>
                 </div>
-                <button class="import-qti-button">Import QTI File</button>
-                <div class="drag-drop-section">
-                    <input type="file" id="fileInput" class="drag-drop-input" />
-                    <label for="fileInput" class="drag-drop-label">Drag and drop a file or click to browse</label>
-                </div>
+                
+                <head>
+                    <title>Import QTI File</title>
+                </head>
+                <body> 
+                    <form method="post" action="/create_quiz" enctype="multipart/form-data"> 
+                        <input type="file" name="file"> 
+                        <input type="submit" value="Submit"> 
+                    </form>
+                </body> 
             </div>
         </main>
     </div>
