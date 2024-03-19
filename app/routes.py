@@ -2,6 +2,7 @@
 from flask import render_template, request, redirect, url_for
 from app import app
 from app import save
+from app import docGen
 from app.parse import ziptoQuizObj
 from werkzeug.utils import secure_filename
 import os
@@ -87,4 +88,15 @@ def demo(quizID = ''):
         if q.id == quizID:
             currentQuiz = q
     return render_template('demo.html', quiz = str(currentQuiz))
+
+@app.route('/export/<quizID>')
+def export(quizID = ''):
+
+    for q in save.loadQuiz():
+        if q.id == quizID:
+            docGen.Quiz_to_Doc(q, False)    #Generate Exam
+            docGen.Quiz_to_Doc(q, True)     #Generate Exam Key
+    
+    return redirect('/')
+            
 

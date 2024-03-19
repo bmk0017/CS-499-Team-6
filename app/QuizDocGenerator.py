@@ -1,6 +1,7 @@
 import string
 import docx
 from docx.shared import RGBColor
+import re
 
 
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -20,7 +21,7 @@ class QuizDocGenerator:
 
     # add multiple choice question, given document, question object (applies for T/F as well)
     def __add_MC_question(self, document, qobj, key=False):
-        question = document.add_paragraph(qobj.question_content + '\n', style='List Number')
+        question = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n', style='List Number')
         question.paragraph_format.keep_together = True
         i = 0
         for id, value in qobj.choices.items():
@@ -33,7 +34,7 @@ class QuizDocGenerator:
 
     # adds true/false question
     def __add_TF_question(self, document, qobj, key=False):
-        question = document.add_paragraph(qobj.question_content + '\n', style='List Number')
+        question = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n', style='List Number')
         question.paragraph_format.keep_together = True
         i = 0
         for id, value in qobj.choices.items():
@@ -46,7 +47,7 @@ class QuizDocGenerator:
 
     # Adds multiple answer question
     def __add_MA_question(self, document, qobj, key=False):
-        question = document.add_paragraph(qobj.question_content + '\n', style='List Number')
+        question = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n', style='List Number')
         question.paragraph_format.keep_together = True
         i = 0
         for id, value in qobj.choices.items():
@@ -59,7 +60,7 @@ class QuizDocGenerator:
 
     # add fill in the blank question (also applies for multiple fill in the blank); I'm assuming that the prompt would have the blank in it so just printing prompt
     def __add_FnB_question(self, document, qobj, key=False):
-        question = document.add_paragraph(qobj.question_content + '\n', style='List Number')
+        question = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n', style='List Number')
         question.paragraph_format.keep_together = True
         if key:
             question.add_run(str(qobj.correct_choices)).font.color.rgb = RGBColor(0, 255, 0)
@@ -67,7 +68,7 @@ class QuizDocGenerator:
 
     # adds question format for when ther is a separate question and (user inputed/typed/written) answer field/blank
     def __add_Short_question(self, document, qobj, key=False):
-        question = document.add_paragraph(qobj.question_content + '\n', style='List Number')
+        question = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n', style='List Number')
         question.paragraph_format.keep_together = True
         if key:
             question.add_run(qobj.correct_feedback).font.color.rgb = RGBColor(0, 255, 0)
@@ -75,7 +76,7 @@ class QuizDocGenerator:
 
     # adds numeric question
     def __add_Num_question(self, document, qobj, key=False):
-        question = document.add_paragraph(qobj.question_content + '\n', style='List Number')
+        question = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n', style='List Number')
         question.paragraph_format.keep_together = True
         if key:
             vals = list(qobj.answer_range.values())
@@ -84,7 +85,7 @@ class QuizDocGenerator:
 
     # adds formula question
     def __add_Form_question(self, document, qobj, key=False):
-        question = document.add_paragraph(qobj.question_content + '\n', style='List Number')
+        question = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n', style='List Number')
         question.paragraph_format.keep_together = True
         if key:
             question.add_run("undecided atm").font.color.rgb = RGBColor(0, 255, 0)
@@ -92,7 +93,7 @@ class QuizDocGenerator:
 
     # adds question format for long response questions (applicable for file upload questions?); each of these has its own page
     def __add_Essay_question(self, document, qobj, key=False):
-        question = document.add_paragraph(qobj.question_content + '\n', style='List Number')
+        question = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n', style='List Number')
         question.paragraph_format.page_break_before = True
         if key:
             question.add_run(qobj.general_feedback).font.color.rgb = RGBColor(0, 255, 0)
@@ -100,13 +101,13 @@ class QuizDocGenerator:
 
     # adds text field
     def __add_Text_field(self, document, qobj):
-        text = document.add_paragraph(qobj.question_content + '\n')
+        text = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n')
         text.paragraph_format.keep_together = True
 
     # adds matching question
     def __add_Match_question(self, document, qobj, key=False):
         if key:
-            question = document.add_paragraph(qobj.question_content + '\n', style='List Number')
+            question = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n', style='List Number')
             question.paragraph_format.keep_together = True
             for id1, id2 in qobj.correct_choices.items():
                 question.add_run(
@@ -117,7 +118,7 @@ class QuizDocGenerator:
             outtable = document.add_table(rows=1, cols=1).cell(0, 0)
             table = outtable.add_table(rows=1, cols=4)
             row = table.rows[0].cells
-            row[0].add_paragraph(qobj.question_content, style='List Number')
+            row[0].add_paragraph(remove_html_tags(qobj.question_content), style='List Number')
             row[0].merge(row[3])
             num_rows = max(len(qobj.right_choices), len(qobj.left_choices))
             index = 1
@@ -136,7 +137,7 @@ class QuizDocGenerator:
 
     # adds multiple dropdown question
     def __add_Mdrop_question(self, document, qobj, key=False):
-        question = document.add_paragraph(qobj.question_content + '\n', style='List Number')
+        question = document.add_paragraph(remove_html_tags(qobj.question_content) + '\n', style='List Number')
         question.paragraph_format.keep_together = True
         if key:
             for name, id in qobj.correct_choices.items():
@@ -183,3 +184,8 @@ class QuizDocGenerator:
             document.save(quiz.title + '_' + quiz.id + '_key.docx')
         else:
             document.save(quiz.title + '_' + quiz.id + '.docx')
+
+def remove_html_tags(text):
+    """Remove html tags from a string"""
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text).replace('&nbsp', '')
