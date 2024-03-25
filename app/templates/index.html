@@ -14,36 +14,26 @@
         </header>
         <main>
             <div class="buttons-container">
-                <button class="create-quiz-button">Create a New Quiz</button>
+                <!-- Anchor tag version -->
+                <a href="create_quiz.html">
+                    <button>Create New Quiz</button>
+                </a>
+
+                <!-- Existing quizzes, quiz banks, import button, etc. -->
                 <div class="existing-quizzes">
                     <h2>Existing Quizzes</h2>
                     <ul class="quiz-list">
                         <!-- List of existing quizzes goes here -->
+                        {% for quiz in quizzes %}
                         <li>
-                            Quiz 1
+                            {{ quiz.name }}
                             <div class="quiz-buttons">
-                                <button class="edit-button">Edit</button>
+                                <button class="edit-button" onclick="editQuiz({{ quiz.id }})">Edit</button>
                                 <button class="view-button">View</button>
                                 <button class="export-button">Export</button>
                             </div>
                         </li>
-                        <li>
-                            Quiz 2
-                            <div class="quiz-buttons">
-                                <button class="edit-button">Edit</button>
-                                <button class="view-button">View</button>
-                                <button class="export-button">Export</button>
-                            </div>
-                        </li>
-                        <li>
-                            Quiz 3
-                            <div class="quiz-buttons">
-                                <button class="edit-button">Edit</button>
-                                <button class="view-button">View</button>
-                                <button class="export-button">Export</button>
-                            </div>
-                        </li>
-                        <!-- Add more items as needed -->
+                        {% endfor %}
                     </ul>
                 </div>
                 <button class="create-quiz-bank-button">Create Quiz Bank</button>
@@ -83,5 +73,13 @@
             </div>
         </main>
     </div>
+
+    <script>
+        // JavaScript function to handle edit quiz button click
+        function editQuiz(quizId) {
+            // Open the edit quiz page in a new window
+            window.open("/edit_quiz/" + quizId, "Edit Quiz", "width=800,height=600");
+        }
+    </script>
 </body>
 </html>

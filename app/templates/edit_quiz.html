@@ -3,45 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Quiz - Canvas-Like Quiz Creator</title>
+    <title>Edit Quiz</title>
+    <!-- Include necessary CSS files -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Create a Quiz</h1>
+            <h1>Edit Quiz</h1>
+            <hr> <!-- Line underneath the title -->
         </header>
-        <main>
-            <form method="post" action="{{ url_for('create_quiz') }}">
-                <label for="quiz_title">Quiz Title:</label>
-                <input type="text" name="quiz_title" required><br>
-
-                <div id="questions-container">
-                    <div class="question" data-question-number="1">
-                        <label for="question_1_type">Select Question Type:</label>
-                        <select name="question_1_type" onchange="generateQuestionTemplate(this)">
-                            <option value="" disabled selected>Select Question Type</option>
-                            <option value="MultipleChoice">Multiple Choice</option>
-                            <option value="TrueFalse">True/False</option>
-                            <option value="FillintheBlank">Fill in the Blank</option>
-                            <option value="FillinMultipleBlanks">Fill in Multiple Blanks</option>
-                            <option value="MultipleAnswers">Multiple Answers</option>
-                            <option value="MultipleDropdowns">Multiple Dropdowns</option>
-                            <option value="Matching">Matching</option>
-                            <option value="Numeric">Numeric</option>
-                            <option value="Formula">Formula</option>
-                            <option value="Essay">Essay</option>
-                            <option value="FileUpload">File Upload</option>
-                            <option value="Text">Text Only</option>
+        <<main>
+            <div id="questions-container"> <!-- Container for questions -->
+                <!-- Loop through questions -->
+                <form id="questions-form" method="POST">
+                    {% for question in questions %}
+                    <div class="question">
+                        <h2>Question {{ loop.index }}</h2>
+                        <input type="hidden" name="question_id_{{ loop.index }}" value="{{ question['id'] }}">
+                        <input type="text" name="question_text_{{ loop.index }}" value="{{ question['text'] }}">
+                        <br>
+                        {% if question['type'] == 'multiple_choice' %}
+                        <ul class="choices">
+                            {% for choice in question['choices'] %}
+                            <li>
+                                <input type="text" name="choices_{{ loop.index }}[]" value="{{ choice }}">
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <label>Correct Choice:</label>
+                        <select name="correct_choice_{{ loop.index }}">
+                            {% for choice in question['choices'] %}
+                            <option value="{{ choice }}" {% if choice == question['correct_choice'] %}selected{% endif %}>{{ choice }}</option>
+                            {% endfor %}
                         </select>
-                        <div id="question_1_template"></div>
+                        {% endif %}
+                        <!-- Remove Question Button -->
+                        <button type="button" onclick="removeQuestion(this)">Remove Question</button>
                     </div>
-                </div>
-
-                <button type="button" onclick="addQuestion()">Add Question</button>
-                <button type="submit">Create Quiz</button>
+                    {% endfor %}
+                </form>
+            </div> <!-- End of questions-container -->
+        
+            <!-- Randomize Question Order Section -->
+            <form method="POST" action="{{ url_for('randomize_question_order') }}">
+                <button type="submit">Randomize Question Order</button>
             </form>
+        
+            <div class="footer-buttons">
+                <!-- Add New Question Button -->
+                <button type="button" class="add-question" onclick="addQuestion()">Add New Question</button>
+                <!-- Save Changes Button -->
+                <button type="submit" form="questions-form">Save Changes</button>
+            </div>
         </main>
+        
+        
     </div>
 
     <script>
@@ -110,8 +127,7 @@
                     <textarea name="question_${questionCount}_text" required></textarea><br>
                     <label>Enter the choices for the first dropdown:</label><br>
                     <input type="text" name="question_${questionCount}_dropdown_1_choice_1" required placeholder="Choice 1"><br>
-                    <input type="text" name="question_${questionCount}_
-                    dropdown_1_choice_2" required placeholder="Choice 2"><br>
+                    <input type="text" name="question_${questionCount}_dropdown_1_choice_2" required placeholder="Choice 2"><br>
                     <!-- Add more choices for the first dropdown as needed -->
                     <label>Enter the choices for the second dropdown:</label><br>
                     <input type="text" name="question_${questionCount}_dropdown_2_choice_1" required placeholder="Choice 1"><br>

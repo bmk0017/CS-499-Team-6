@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Bank - Canvas-Like Quiz Creator</title>
+    <title>Questions Vertical</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Quiz Bank</h1>
+            <h1>Questions</h1>
+            <hr> <!-- Line underneath the title -->
         </header>
         <main>
-            <h2>Quizzes</h2>
-            <ul>
-                {% for quiz in quizzes %}
-                    <li>{{ quiz.title }}</li>
+            <ul class="question-list">
+                <!-- Loop through questions to display -->
+                {% for question in questions %}
+                <li>{{ question }}</li>
                 {% endfor %}
             </ul>
         </main>

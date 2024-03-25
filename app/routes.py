@@ -1,14 +1,13 @@
-# Import necessary modules and classes
 from flask import render_template, request, redirect, url_for
 from app import app
 from app.parse import parseQTI
 from werkzeug.utils import secure_filename
 import os
+import random
 
 # Sample data for storing quizzes and questions (using an in-memory list as an example)
 quizzes = []
 questions = []
-
 
 # Specify the upload folder for the XML files
 UPLOAD_FOLDER = 'uploads'
@@ -21,6 +20,17 @@ def store_quiz_in_memory(quiz):
 # Function to retrieve quizzes from the in-memory list
 def retrieve_quizzes_from_memory():
     return quizzes
+
+# Function to retrieve questions from the in-memory list
+def retrieve_questions_from_memory():
+    return questions
+
+# Function to retrieve a quiz by its ID
+def get_quiz_by_id(quiz_id):
+    for quiz in quizzes:
+        if quiz['id'] == quiz_id:
+            return quiz
+    return None  # Return None if quiz with the given ID is not found
 
 # Home route: Displays the main page with the list of quizzes
 @app.route('/')
@@ -63,7 +73,10 @@ def create_quiz():
 # New route for creating a quiz page
 @app.route('/create_quiz_page')
 def create_quiz_page():
-    return render_template('create_quiz.html')
+    # Retrieve the list of questions to display in the form for editing
+    # Here, you would retrieve the list of questions from wherever they are stored
+    # and pass them to the template to display them in a vertical list
+    return render_template('edit_quiz.html', questions=questions)
 
 # Quiz Bank route: Displays the list of quizzes in the quiz bank page
 @app.route('/quiz_bank')
@@ -75,3 +88,31 @@ def quiz_bank():
 @app.route('/create_quiz_bank_page')
 def create_quiz_bank_page():
     return render_template('quiz_bank.html')
+
+# New route for editing a quiz
+@app.route('/edit_quiz/<int:quiz_id>')
+def edit_quiz(quiz_id):
+    # Retrieve the quiz with the specified ID from the in-memory list
+    # You would need to implement this logic to retrieve the quiz data
+    # For now, let's assume the quiz data is retrieved and stored in a variable named 'quiz'
+    quiz = get_quiz_by_id(quiz_id)
+
+    # Render the "Edit Quiz" page with the quiz data
+    return render_template('edit_quiz.html', quiz=quiz)
+
+# Route to display questions vertically
+@app.route('/questions_vertical')
+def questions_vertical():
+    # Retrieve the list of questions from the in-memory list
+    return render_template('questions_vertical.html', questions=retrieve_questions_from_memory())
+
+# Route to randomize question order
+@app.route('/randomize_question_order', methods=['POST'])
+def randomize_question_order():
+    # Retrieve the list of questions from the in-memory list
+    all_questions = retrieve_questions_from_memory()
+    # Shuffle the list of questions
+    random.shuffle(all_questions)
+    # Update the list of questions in memory (if needed)
+    # Optionally, you may want to store the shuffled order permanently
+    return redirect(url_for('create_quiz_page'))
