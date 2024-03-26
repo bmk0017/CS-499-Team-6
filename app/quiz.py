@@ -15,3 +15,9 @@ class Quiz:
 
     def __str__(self):
         return '\n'.join([str(q) for q in self.questions])
+
+    def prep(self):
+        for question in self.questions:
+            if question.question_type == "calculated_question":
+                qvar = question.possible_questions[random.randint(0, len(question.possible_questions) - 1)]
+                question.chosenID = qvar.id
