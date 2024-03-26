@@ -95,3 +95,24 @@ def quiz_bank():
 @app.route('/create_quiz_bank_page')
 def create_quiz_bank_page():
     return render_template('quiz_bank.html')
+
+@app.route('/demo_page/<quizID>')
+def demo(quizID = ''):
+    
+    for q in save.loadQuiz():
+        if q.id == quizID:
+            currentQuiz = q
+    return render_template('demo.html', quiz = str(currentQuiz))
+
+@app.route('/export/<quizID>')
+def export(quizID = ''):
+
+    for q in save.loadQuiz():
+        if q.id == quizID:
+            q.prep()
+            docGen.Quiz_to_Doc(q, False)    #Generate Exam
+            docGen.Quiz_to_Doc(q, True)     #Generate Exam Key
+    
+    return redirect('/')
+            
+
