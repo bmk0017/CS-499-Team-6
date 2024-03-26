@@ -199,7 +199,8 @@ class Formula(Question):
     question_type = "calculated_question"
     possible_questions: List
     equation: Equation
-
+    chosenID: int
+    
     def __init__(self):
         super().__init__()
         self.possible_questions = []
