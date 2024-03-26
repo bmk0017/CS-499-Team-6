@@ -1,6 +1,7 @@
 import logging
 import xml.etree.ElementTree as ET
 from typing import List
+import random
 
 class Quiz:
     id: str
