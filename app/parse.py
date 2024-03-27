@@ -2,12 +2,9 @@
 from app.quiz import *
 from app.question import *
 import tempfile
-import logging
 import zipfile
 import os
-
 import xml.etree.ElementTree as ET
-
 
 def ziptoQuizObj(filePath):
     with tempfile.TemporaryDirectory() as td:
@@ -95,8 +92,14 @@ def parseMultipleChoice(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
@@ -123,8 +126,14 @@ def parseTrueFalse(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
@@ -152,8 +161,14 @@ def parseFillintheBlank(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
@@ -185,8 +200,14 @@ def parseFillinMultipleBlanks(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
@@ -214,8 +235,14 @@ def parseMultipleAnswers(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
@@ -243,8 +270,14 @@ def parseMultipleDropdowns(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
@@ -279,8 +312,14 @@ def parseMatching(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
@@ -313,15 +352,21 @@ def parseNumeric(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
 
     #Retrieve Exact answer if there is one, and the answer range
     newIDValue = -1
-    for child in item.findall(r"./{*}resprocessing/{*}respcondition[@continue='No']/{*}conditionvar"):
+    for child in item.findall(r"./{*}resprocessing/{*}respcondition[@continue='No']"):
         currentID = None
 
         #Get an ID if there is one
@@ -331,7 +376,7 @@ def parseNumeric(item):
                     currentID = tag.removesuffix('_fb')
                         
         #If this has an exact answer store that, otherwise don't
-        if (match := child.find(r'./{*}or')) is not None: 
+        if (match := child.find(r'./{*}conditionvar/{*}or')) is not None: 
             if currentID is None:
                 currentID = str(newIDValue)
                 newIDValue -= 1
@@ -363,15 +408,15 @@ def parseNumeric(item):
             #Differentiate between GTE and GT, aswell as LTE and LT
             greater = 0
             lesser = 0
-            if (gt := child.find(r'./{*}vargte')) is not None:
+            if (gt := child.find(r'./{*}conditionvar/{*}vargte')) is not None:
                 greater = gt.text
             else:
-                greater = child.find(r'./{*}vargt').text
+                greater = child.find(r'./{*}conditionvar/{*}vargt').text
 
-            if (lt := child.find(r'./{*}varlte')) is not None:
+            if (lt := child.find(r'./{*}conditionvar/{*}varlte')) is not None:
                 lesser = lt.text
             else:
-                lesser = child.find(r'./{*}varlt').text
+                lesser = child.find(r'./{*}conditionvar/{*}varlt').text
 
             question.answer_ranges[currentID] = [greater,lesser]
     
@@ -384,14 +429,20 @@ def parseNumeric(item):
 def parseFormula(item):
     question = Formula()
 
-     #Retrieve question title
+    #Retrieve question title
     question.question_title = item.attrib['title']
 
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
@@ -435,8 +486,14 @@ def parseEssay(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
@@ -456,8 +513,14 @@ def parseFileUpload(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text
@@ -477,8 +540,14 @@ def parseText(item):
     #Retrieve points possible
     question.points_possible = item.find(r'./{*}itemmetadata/{*}qtimetadata')[1][1].text
 
+    #Retrieve Parent ID
+    question.parent_id = item.attrib['ident']
+
     #Retrieve assessment Id
-    question.question_id = item.attrib['ident']
+    if item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[2][1].text
+    elif item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][0].text == 'assessment_question_identifierref':
+        question.question_id = item.find(r'./{*}itemmetadata/{*}qtimetadata')[3][1].text
     
     #Retrieve the question content
     question.question_content = item.find(r'./{*}presentation/{*}material/{*}mattext').text

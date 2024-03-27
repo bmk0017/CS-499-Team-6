@@ -6,6 +6,7 @@ class Question:
     question_id: str
     question_content: str
     feedback: Dict
+    parent_id:str
     
     def __init__(self):
         self.feedback = {}
@@ -83,7 +84,7 @@ class FillinMultipleBlanks(Question):
 
 class MultipleAnswers(Question):
     question_type = "multiple_answers_question"
-    choices: Dict[str, str]
+    choices: Dict[str, str]  
     correct_choices: List[int]                  
 
     def __init__(self):
@@ -256,7 +257,3 @@ class Text(Question):
                 + "\n" + self.question_title 
                 + "\nQuestion:\n" + str(self.question_content)
                 + "\nPoints: " + self.points_possible)
-
-
-
-
