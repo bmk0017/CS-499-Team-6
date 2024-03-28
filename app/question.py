@@ -257,3 +257,6 @@ class Text(Question):
                 + "\n" + self.question_title 
                 + "\nQuestion:\n" + str(self.question_content)
                 + "\nPoints: " + self.points_possible)
+    
+
+

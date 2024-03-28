@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from typing import List
 import hashlib
 import random
+from app.question import *
 
 class Quiz:
     id: str
@@ -26,7 +27,7 @@ class Quiz:
         current_ids = self.get_id_list()
         while id in current_ids:
             id = random.randint(1, 99999)
-        return id 
+        return str(id)
         
     def get_id_list(self):
         id_list = []
@@ -34,6 +35,30 @@ class Quiz:
             id_list.append(get_original_answer_ids(q))
         return id_list
     
+
+    #Take in the values neccesary to create a multiple choice question
+    def create_multiple_choice_question(self, content : str, points : str, choices : List[str], correct_answer : str, title = 'Question', ):
+        multiple_choice = MultipleChoice()
+
+        multiple_choice.question_title = title  #Set Question Title
+
+        multiple_choice.points_possible = points    #Set Points Possible
+
+        multiple_choice.question_id = self.gen_choice_id()  #Generate and set a Question ID
+
+        multiple_choice.question_content = content  #Set Question Content
+
+        multiple_choice.parent_id = self.id #Set the Parent ID
+
+        for choice in choices:  #Iterate through the choices
+            id = self.gen_choice_id #assign an ID to the choice
+            multiple_choice.choices[id] = choice    #Put the id and the choice in the choices dictionary
+
+            if choice == correct_answer:    #If the current choice is the correct answer set the correct_choice to the choice id
+                multiple_choice.correct_choice = id
+
+        return multiple_choice
+
 def get_original_answer_ids(question):
     ids = []
     if question.question_type in ["multiple_choice_question", "true_false_question", "multiple_answers_question"]:
@@ -59,5 +84,5 @@ def get_original_answer_ids(question):
 
     return ids
 
-                
+
         
