@@ -10,7 +10,7 @@ import os
 #---------------------------------------WORK IN PROGRESS--------------------------------------------
 
 def quiztoQTI(quiz):
-    createQTI(quiz).write('temp/' + quiz.id, encoding='utf-8', xml_declaration=True)
+    createQTI(quiz).write('temp/' + quiz.id, encoding='UTF-8', xml_declaration=True)
 
     # with tempfile.TemporaryDirectory(dir = os.getcwd() + '\\temp') as td:
     #     with zipfile.ZipFile(td, 'w', zipfile.ZIP_DEFLATED) as zf:
@@ -50,7 +50,7 @@ def add_question(node, question : Question):
     mattext_html(material, question.question_content)
     fill_presentation(presentation, question)
 
-    if question.question_type != 'text_only_question':
+    if question.question_type not in ['text_only_question', 'file_upload_question']:
         resprocessingTag = ET.SubElement(item, 'resprocessing')
         outcomes = ET.SubElement(resprocessingTag, 'outcomes')
         ET.SubElement(outcomes, 'decvar', maxvalue='100', minvalue='0', varname='SCORE', vartype='Decimal')
@@ -85,7 +85,7 @@ def resprocessing(node, question):
 
 def answer_feedback_resprocessing(node, question : Question):
     for id in question.feedback:
-        if id not in ['correct', 'general_incorrect', 'general'] and question.question_type not in ["matching_question"]:
+        if id not in ['correct', 'general_incorrect', 'general'] and question.question_type not in ["matching_question", "numerical_question"]:
             respcondition = ET.SubElement(node, 'respcondition')
             respcondition.set('continue', 'Yes')
             conditionvar = ET.SubElement(respcondition, 'conditionvar')
@@ -318,44 +318,12 @@ def calculated_numeric_response(node, question):
     response_str = ET.SubElement(node, 'response_str', ident='response1', rcardinality='Single')
     render_fib = ET.SubElement(response_str, 'render_fib', fibtype='Decimal')
     ET.SubElement(render_fib, 'response_label', ident='answer1')    
-
-def get_original_answer_ids(question : Question):
-    ids = []
-    if question.question_type in ["multiple_choice_question", "true_false_question", "multiple_answers_question"]:
-        for id in question.choices:
-            ids.append(id)
-    elif question.question_type == 'short_answer_question':
-        for id in question.correct_choices:
-            ids.append(id)
-    elif question.question_type == 'fill_in_multiple_blanks_question':
-        for name in question.correct_choices:
-            for id in question.correct_choices[name]:
-                ids.append(id)
-    elif question.question_type == 'multiple_dropdowns_question':
-        for name in question.choices:
-            for id in question.choices[name]:
-                ids.append(id)
-    elif question.question_type == 'matching_question':
-        for id in question.left_choices:
-            ids.append(id)
-    elif question.question_type == 'calculated_question':
-        for var in question.possible_questions:
-            ids.append(var.id)
-
-    return ids
             
 def mattext_html(node, value):
     if '<div>' in value or '<p>' in value:
         ET.SubElement(node, 'mattext', texttype="text/html").text = value
     else:
         ET.SubElement(node, 'mattext', texttype="text/plain").text = value
-
-def prettify(elem):
-     rough_string = ET.tostring(elem, 'utf-8')
-     reparsed = minidom.parseString(rough_string)
-     uglyXml = reparsed.toprettyxml(indent="\t")
-     pattern = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)
-     return pattern.sub('>\g<1></', uglyXml)
 
 def meta_field(node, label, entry):
     qtimetadatafield = ET.SubElement(node, 'qtimetadatafield')

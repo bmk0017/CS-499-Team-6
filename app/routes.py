@@ -1,41 +1,20 @@
+# Import necessary modules and classes
 from flask import render_template, request, redirect, url_for
 from app import app
 from app import save
-from app import docGen
 from app.parse import ziptoQuizObj
-from werkzeug.utils import secure_filename
+from app.qti_generator import quiztoQTI
 import os
-
-# Sample data for storing quizzes and questions (using an in-memory list as an example)
-quizzes = []
-questions = []
-
 
 # Specify the upload folder for the XML files
 UPLOAD_FOLDER = os.path.join(os.getcwd(),'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Function to store a quiz in the in-memory list
-def store_quiz_in_memory(quiz):
-    quizzes.append(quiz)
-
-# Function to retrieve quizzes from the in-memory list
-def retrieve_quizzes_from_memory():
-    return quizzes
-
 # Home route: Displays the main page with the list of quizzes
 @app.route('/')
 def home():
-    # filepaths = [r'C:\Users\matth\Desktop\Team 6 Project Extra Files\team-6-quiz-export-0.zip', 
-    #              r'C:\Users\matth\Desktop\Team 6 Project Extra Files\team-6-quiz-export-1.zip',
-    #              r'C:\Users\matth\Desktop\Team 6 Project Extra Files\team-6-quiz-export-2.zip',
-    #              r'C:\Users\matth\Desktop\Team 6 Project Extra Files\team-6-quiz-export-3.zip',
-    #              r'C:\Users\matth\Desktop\Team 6 Project Extra Files\team-6-quiz-export-4.zip', 
-    #              r'C:\Users\matth\Desktop\Team 6 Project Extra Files\robert-k-preston-playground-quiz-export-3-4-24.zip']
-    # save.saveQuiz(ziptoQuizObj(filepaths[5]))
-
-    for q in save.loadQuiz():
-        print(q)
+    quiz = save.loadQuiz()[1]
+    quiztoQTI(quiz)
 
     # Retrieve the list of quizzes from the in-memory list
     return render_template('index.html', quizzes = save.loadQuiz())
@@ -50,16 +29,6 @@ def create_quiz():
 
             file = request.files.get("file") 
             save.saveQuiz(ziptoQuizObj(file))
-
-            # if file.filename != '':
-            #     # Save the uploaded file to the specified folder
-            #     filename = secure_filename(file.filename)
-            #     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            #     file.save(file_path)
-
-            #     # Now, you can pass the file_path to the parseQTI function
-            #     save.saveQuiz(ziptoQuizObj(file_path))
-            #     print(ziptoQuizObj(file_path))
 
         else:
             # Handle the case where no file is uploaded
@@ -80,10 +49,11 @@ def create_quiz():
 # New route for creating a quiz page
 @app.route('/create_quiz_page')
 def create_quiz_page():
-    # Retrieve the list of questions to display in the form for editing
-    # Here, you would retrieve the list of questions from wherever they are stored
-    # and pass them to the template to display them in a vertical list
-    return render_template('edit_quiz.html', questions=questions)
+    return render_template('create_quiz.html')
+
+@app.route('/edit_quiz')
+def edit_quiz():
+    return render_template('edit_quiz.html')
 
 # Quiz Bank route: Displays the list of quizzes in the quiz bank page
 @app.route('/quiz_bank')
@@ -95,3 +65,12 @@ def quiz_bank():
 @app.route('/create_quiz_bank_page')
 def create_quiz_bank_page():
     return render_template('quiz_bank.html')
+
+@app.route('/demo_page/<quizID>')
+def demo(quizID = ''):
+    
+    for q in save.loadQuiz():
+        if q.id == quizID:
+            currentQuiz = q
+    return render_template('demo.html', quiz = str(currentQuiz))
+
